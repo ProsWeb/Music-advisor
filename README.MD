@@ -3,10 +3,10 @@
 Персональный музыкальный консультант, который может делать предложения на основе предпочтений и даже делиться ссылками 
 на новые выпуски и избранные плейлисты.
 
-В коде используются:
-Spotify API;
-HTTP Request/Response;
-Обработка JSON;
-Strategy design pattern;
-MVC design pattern;
-Gradle.
+### В коде используются:
+- Spotify API;
+- HTTP Request/Response;
+- Обработка JSON;
+- Strategy design pattern;
+- MVC design pattern;
+- Gradle.
