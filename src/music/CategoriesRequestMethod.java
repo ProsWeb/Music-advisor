@@ -16,7 +16,7 @@ public class CategoriesRequestMethod implements RequestMethod {
         String uriPart = "categories";
         String userRequest = "categories";
 
-        JsonObject joCategories = UtilityClass
+        JsonObject joCategories = Controller
                 .request(accessToken, apiServer, uriPart, userRequest);
 
         showCategories(joCategories);
