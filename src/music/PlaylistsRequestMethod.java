@@ -25,7 +25,7 @@ public class PlaylistsRequestMethod implements RequestMethod {
         String uriPart = "categories";
         String userRequest = "categories";
 
-        JsonObject joCategoriesForPlaylists = UtilityClass
+        JsonObject joCategoriesForPlaylists = Controller
                 .request(accessToken, apiServer, uriPart, userRequest);
 
         for (JsonElement item : joCategoriesForPlaylists

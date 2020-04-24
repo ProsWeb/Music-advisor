@@ -16,7 +16,7 @@ public class FeaturedRequestMethod implements RequestMethod {
         String uriPart = "featured-playlists";
         String userRequest = "playlists";
 
-        JsonObject joPlaylists = UtilityClass
+        JsonObject joPlaylists = Controller
                 .request(accessToken, apiServer, uriPart, userRequest);
 
         showPlaylists(joPlaylists);

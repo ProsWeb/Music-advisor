@@ -37,10 +37,10 @@ public class AuthSetMethod {
         server.start();
 
         System.out.println("use this link to request the access code:");
-        System.out.println(accessServer + UtilityClass.AUTHORIZE_PART
-                + "?client_id=" + UtilityClass.CLIENT_ID
-                + "&redirect_uri=" + UtilityClass.REDIRECT_URI
-                + "&response_type=" + UtilityClass.RESPONSE_TYPE);
+        System.out.println(accessServer + Controller.AUTHORIZE_PART
+                + "?client_id=" + Controller.CLIENT_ID
+                + "&redirect_uri=" + Controller.REDIRECT_URI
+                + "&response_type=" + Controller.RESPONSE_TYPE);
         System.out.println("waiting for code...");
 
         server.createContext("/",
@@ -79,13 +79,13 @@ public class AuthSetMethod {
 
         HttpRequest requestForAccessToken = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(
-                        "client_id=" + UtilityClass.CLIENT_ID
-                                + "&client_secret=" + UtilityClass.CLIENT_SECRET
-                                + "&grant_type=" + UtilityClass.GRANT_TYPE
+                        "client_id=" + Controller.CLIENT_ID
+                                + "&client_secret=" + Controller.CLIENT_SECRET
+                                + "&grant_type=" + Controller.GRANT_TYPE
                                 + "&code=" + code
-                                + "&redirect_uri=" + UtilityClass.REDIRECT_URI))
+                                + "&redirect_uri=" + Controller.REDIRECT_URI))
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .uri(URI.create(accessServer + UtilityClass.TOKEN_PART))
+                .uri(URI.create(accessServer + Controller.TOKEN_PART))
                 .build();
 
         HttpResponse<String> responseWithAccessToken = HttpClient

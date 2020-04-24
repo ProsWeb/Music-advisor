@@ -18,7 +18,7 @@ public class NewRequestMethod implements RequestMethod {
         String uriPart = "new-releases";
         String userRequest = "albums";
 
-        JsonObject joAlbums = UtilityClass
+        JsonObject joAlbums = Controller
                 .request(accessToken, apiServer, uriPart, userRequest);
 
         showNewAlbums(joAlbums);
