@@ -1,13 +1,14 @@
 # Music-advisor
 
-Персональный музыкальный консультант, который будет делать предложения на основе предпочтений и даже делится ссылками 
+Персональный музыкальный консультант, который может делать предложения на основе предпочтений и даже делиться ссылками 
 на новые выпуски и избранные плейлисты.
 
 В коде используются:
 Spotify API;
 HTTP Request/Response;
-работа с JSON;
+Обработка JSON;
 Strategy design pattern;
+MVC design pattern;
 Gradle.
 
 ![Alt Text](https://github.com/ProsWeb/Music-advisor/blob/master/download.gif)
