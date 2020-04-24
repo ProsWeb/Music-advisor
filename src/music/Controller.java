@@ -1,5 +1,6 @@
 package music;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -8,16 +9,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Controller {
-
-    static final String CLIENT_ID = "da072c60fcee469e8b0f4140aa4480d5";
-    static final String CLIENT_SECRET = "8ada13093c704487b57c3a660448884e";
-    static final String AUTHORIZE_PART = "/authorize";
-    static final String RESPONSE_TYPE = "code";
-    static final String TOKEN_PART = "/api/token";
-    static final String GRANT_TYPE = "authorization_code";
-    static final String REDIRECT_URI = "http://localhost:8080";
+class Controller {
 
     private Controller() {
         throw new IllegalStateException("Controller class");
@@ -46,5 +41,38 @@ public class Controller {
         return JsonParser.parseString(json)
                 .getAsJsonObject()
                 .getAsJsonObject(userRequest);
+    }
+
+    static List<String> collectNames(JsonObject jo) {
+
+        List<String> names = new ArrayList<>();
+
+        for (JsonElement item : jo.getAsJsonArray("items")) {
+
+            String name = item.getAsJsonObject()
+                    .get("name")
+                    .getAsString();
+
+            names.add(name);
+        }
+
+        return names;
+    }
+
+    static List<String> collectLinks(JsonObject jo) {
+
+        List<String> links = new ArrayList<>();
+
+        for (JsonElement item : jo.getAsJsonArray("items")) {
+
+            String link = item.getAsJsonObject()
+                    .getAsJsonObject("external_urls")
+                    .get("spotify")
+                    .getAsString();
+
+            links.add(link);
+        }
+
+        return links;
     }
 }

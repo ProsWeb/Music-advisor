@@ -5,10 +5,9 @@ import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class NewRequestMethod implements RequestMethod {
+class NewRequestMethod implements RequestMethod {
     @Override
     public void request(final String accessToken,
                         final String apiServer,
@@ -21,32 +20,34 @@ public class NewRequestMethod implements RequestMethod {
         JsonObject joAlbums = Controller
                 .request(accessToken, apiServer, uriPart, userRequest);
 
-        showNewAlbums(joAlbums);
+        List<String> names = Controller.collectNames(joAlbums);
+        List<String> artists = collectArtists(joAlbums);
+        List<String> links = Controller.collectLinks(joAlbums);
+
+        print(names, artists, links);
     }
 
-    private static void showNewAlbums(JsonObject joAlbums) {
+    private static List<String> collectArtists(JsonObject jo) {
 
-        for (JsonElement item : joAlbums.getAsJsonArray("items")) {
+        List<String> artists = new ArrayList<>();
 
-            String albumName = item.getAsJsonObject()
-                    .get("name")
-                    .getAsString();
-            System.out.println(albumName);
-
-            List<String> artistsOfOneAlbum = new ArrayList<>();
+        for (JsonElement item : jo.getAsJsonArray("items")) {
             for (JsonElement artist : item.getAsJsonObject()
                     .getAsJsonArray("artists")) {
-                artistsOfOneAlbum.add(artist.getAsJsonObject()
+                artists.add(artist.getAsJsonObject()
                         .get("name").getAsString());
             }
-            System.out.println(Arrays.toString(artistsOfOneAlbum.toArray()));
+        }
 
-            String albumLink = item.getAsJsonObject()
-                    .getAsJsonObject("external_urls")
-                    .get("spotify")
-                    .getAsString();
-            System.out.println(albumLink);
-            System.out.println();
+        return artists;
+    }
+
+    private static void print(List<String> names, List<String> artists, List<String> links) {
+
+        for (int i = 0; i < names.size(); i++) {
+            System.out.println(names.get(i) + "\n"
+                    + artists.get(i) + "\n"
+                    + links.get(i) + "\n");
         }
     }
 }

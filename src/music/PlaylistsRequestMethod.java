@@ -9,10 +9,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-public class PlaylistsRequestMethod implements RequestMethod {
+class PlaylistsRequestMethod implements RequestMethod {
 
     @Override
     public void request(final String accessToken,
@@ -20,7 +20,8 @@ public class PlaylistsRequestMethod implements RequestMethod {
                         final String requestedCategory)
             throws IOException, InterruptedException {
 
-        Map<String, String> playLists = new HashMap<>();
+        List<String> names = new ArrayList<>();
+        List<String> links = new ArrayList<>();
 
         String uriPart = "categories";
         String userRequest = "categories";
@@ -54,27 +55,12 @@ public class PlaylistsRequestMethod implements RequestMethod {
                         .getAsJsonObject()
                         .getAsJsonObject("playlists");
 
-                fillPlaylists(joPlaylistsInCategory, playLists);
+                names = Controller.collectNames(joPlaylistsInCategory);
+                links = Controller.collectLinks(joPlaylistsInCategory);
             }
         }
 
-        checkCategory(playLists);
-    }
-
-    private boolean failedRequest(String playlistsInCategoryAsJson) {
-
-        if (playlistsInCategoryAsJson.contains("error")) {
-
-            JsonObject error = JsonParser
-                    .parseString(playlistsInCategoryAsJson)
-                    .getAsJsonObject()
-                    .getAsJsonObject("error");
-            System.out.println(error.get("message"));
-
-            return true;
-        }
-
-        return false;
+        checkCategory(names, links);
     }
 
     private static HttpResponse<String> response(final String accessToken,
@@ -97,29 +83,36 @@ public class PlaylistsRequestMethod implements RequestMethod {
                         HttpResponse.BodyHandlers.ofString());
     }
 
-    private static void fillPlaylists(JsonObject joPlaylistsInCategory, Map<String, String> playLists) {
-        for (JsonElement pl : joPlaylistsInCategory
-                .getAsJsonArray("items")) {
-            String playListName = pl.getAsJsonObject()
-                    .get("name")
-                    .getAsString();
+    private boolean failedRequest(String playlistsInCategoryAsJson) {
 
-            String playlistLink = pl.getAsJsonObject()
-                    .getAsJsonObject("external_urls")
-                    .get("spotify")
-                    .getAsString();
+        if (playlistsInCategoryAsJson.contains("error")) {
 
-            playLists.put(playListName, playlistLink);
+            JsonObject error = JsonParser
+                    .parseString(playlistsInCategoryAsJson)
+                    .getAsJsonObject()
+                    .getAsJsonObject("error");
+            System.out.println(error.get("message"));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void checkCategory(List<String> names, List<String> links) {
+
+        if (names.isEmpty()) {
+            System.out.println("Unknown category name.");
+        } else {
+            print(names, links);
         }
     }
 
-    private static void checkCategory(Map<String, String> playLists) {
+    static void print(List<String> names, List<String> links) {
 
-        if (playLists.isEmpty()) {
-            System.out.println("Unknown category name.");
-        } else {
-            playLists.forEach((name, link) ->
-                    System.out.println(name + "\n" + link + "\n"));
+        for (int i = 0; i < names.size(); i++) {
+            System.out.println(names.get(i) + "\n"
+                    + links.get(i) + "\n");
         }
     }
 }

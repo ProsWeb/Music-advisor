@@ -1,11 +1,11 @@
 package music;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
+import java.util.List;
 
-public class FeaturedRequestMethod implements RequestMethod {
+class FeaturedRequestMethod implements RequestMethod {
 
     @Override
     public void request(final String accessToken,
@@ -19,24 +19,17 @@ public class FeaturedRequestMethod implements RequestMethod {
         JsonObject joPlaylists = Controller
                 .request(accessToken, apiServer, uriPart, userRequest);
 
-        showPlaylists(joPlaylists);
+        List<String> playListsNames = Controller.collectNames(joPlaylists);
+        List<String> playListsLinks = Controller.collectLinks(joPlaylists);
+
+        print(playListsNames, playListsLinks);
     }
 
-    private static void showPlaylists(JsonObject joPlaylists) {
+    private static void print(List<String> names, List<String> links) {
 
-        for (JsonElement item : joPlaylists.getAsJsonArray("items")) {
-
-            String playListName = item.getAsJsonObject()
-                    .get("name")
-                    .getAsString();
-            String playlistLink = item.getAsJsonObject()
-                    .getAsJsonObject("external_urls")
-                    .get("spotify")
-                    .getAsString();
-
-            System.out.println(playListName);
-            System.out.println(playlistLink);
-            System.out.println();
+        for (int i = 0; i < names.size(); i++) {
+            System.out.println(names.get(i) + "\n"
+                    + links.get(i) + "\n");
         }
     }
 }

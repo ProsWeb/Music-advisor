@@ -1,11 +1,11 @@
 package music;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
+import java.util.List;
 
-public class CategoriesRequestMethod implements RequestMethod {
+class CategoriesRequestMethod implements RequestMethod {
 
     @Override
     public void request(final String accessToken,
@@ -19,16 +19,14 @@ public class CategoriesRequestMethod implements RequestMethod {
         JsonObject joCategories = Controller
                 .request(accessToken, apiServer, uriPart, userRequest);
 
-        showCategories(joCategories);
+        List<String> categories = Controller.collectNames(joCategories);
+        print(categories);
     }
 
-    private static void showCategories(JsonObject joCategories) {
-        for (JsonElement item : joCategories.getAsJsonArray("items")) {
+    private static void print(List<String> names) {
 
-            String categoryName = item.getAsJsonObject()
-                    .get("name")
-                    .getAsString();
-            System.out.println(categoryName);
+        for (String name : names) {
+            System.out.println(name);
         }
     }
 }

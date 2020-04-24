@@ -11,53 +11,37 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.Map;
 
-public class AuthSetMethod {
+class AuthSetMethod {
 
     private String code = "";
 
-    Map<String, String> setServers() {
-
-        Map<String, String> servers = new HashMap<>();
-
-        servers.put("authServer", "https://accounts.spotify.com");
-        servers.put("apiServer", "https://api.spotify.com");
-
-        return servers;
-    }
-
-    void launchServer(final String accessServer)
+    void launchServer()
             throws IOException, InterruptedException {
 
         HttpServer server = HttpServer.create();
         server.bind(new InetSocketAddress(8080), 0);
 
         server.start();
-
-        View.showAuthLink(accessServer);
+        View.showAuthLink();
 
         server.createContext("/",
                 exchange -> {
                     String query = exchange.getRequestURI().getQuery();
                     String result;
-                    String answer;
 
                     if (query != null && query.contains("code")) {
                         code = query.substring(5);
                         result = "Got the code. Return back to your program.";
-                        answer = "code received";
                     } else {
                         result = "Not found authorization code. Try again.";
-                        answer = "code not received";
                     }
 
                     exchange.sendResponseHeaders(200, result.length());
                     exchange.getResponseBody().write(result.getBytes());
                     exchange.getResponseBody().close();
 
-                    System.out.println(answer);
+                    System.out.println(result);
                 }
         );
         while (code.equals("")) {
@@ -67,20 +51,20 @@ public class AuthSetMethod {
         server.stop(10);
     }
 
-    String getAccessToken(final String accessServer)
+    String getAccessToken()
             throws IOException, InterruptedException {
 
         System.out.println("Making http request for access_token...");
 
         HttpRequest requestForAccessToken = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(
-                        "client_id=" + Controller.CLIENT_ID
-                                + "&client_secret=" + Controller.CLIENT_SECRET
-                                + "&grant_type=" + Controller.GRANT_TYPE
+                        "client_id=" + Util.CLIENT_ID
+                                + "&client_secret=" + Util.CLIENT_SECRET
+                                + "&grant_type=" + Util.GRANT_TYPE
                                 + "&code=" + code
-                                + "&redirect_uri=" + Controller.REDIRECT_URI))
+                                + "&redirect_uri=" + Util.REDIRECT_URI))
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .uri(URI.create(accessServer + Controller.TOKEN_PART))
+                .uri(URI.create(Util.AUTH_SERVER + Util.TOKEN_PART))
                 .build();
 
         HttpResponse<String> responseWithAccessToken = HttpClient

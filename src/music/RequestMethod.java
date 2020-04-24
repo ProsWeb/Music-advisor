@@ -2,7 +2,7 @@ package music;
 
 import java.io.IOException;
 
-public interface RequestMethod {
+interface RequestMethod {
     void request(String accessToken, String apiServer, String category)
             throws IOException, InterruptedException;
 }
