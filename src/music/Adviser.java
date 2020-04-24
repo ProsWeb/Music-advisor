@@ -1,3 +1,5 @@
+package music;
+
 import java.io.IOException;
 
 class Adviser {

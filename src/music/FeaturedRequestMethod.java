@@ -1,12 +1,9 @@
+package music;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 public class FeaturedRequestMethod implements RequestMethod {
 
@@ -16,23 +13,16 @@ public class FeaturedRequestMethod implements RequestMethod {
                         final String category)
             throws IOException, InterruptedException {
 
+        String uriPart = "featured-playlists";
+        String userRequest = "playlists";
 
-        HttpRequest requestForPlaylists = HttpRequest.newBuilder()
-                .header("Authorization", "Bearer " + accessToken)
-                .uri(URI.create(apiServer + "/v1/browse/featured-playlists"))
-                .GET()
-                .build();
+        JsonObject joPlaylists = UtilityClass
+                .request(accessToken, apiServer, uriPart, userRequest);
 
-        HttpResponse<String> responseWithPlaylists = HttpClient
-                .newBuilder()
-                .build()
-                .send(requestForPlaylists,
-                        HttpResponse.BodyHandlers.ofString());
+        showPlaylists(joPlaylists);
+    }
 
-        String playlistsAsJson = responseWithPlaylists.body();
-        JsonObject joPlaylists = JsonParser.parseString(playlistsAsJson)
-                .getAsJsonObject()
-                .getAsJsonObject("playlists");
+    private static void showPlaylists(JsonObject joPlaylists) {
 
         for (JsonElement item : joPlaylists.getAsJsonArray("items")) {
 

@@ -1,3 +1,5 @@
+package music;
+
 import java.util.Map;
 import java.util.Scanner;
 
@@ -19,7 +21,7 @@ public class Main {
             String userRequest = sc.next();
             switch (userRequest) {
                 case "auth":
-                    servers = authSetMethod.setServers(args);
+                    servers = authSetMethod.setServers();
 
                     String authServer = servers.get("authServer");
                     authSetMethod.launchServer(authServer);

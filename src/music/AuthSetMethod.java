@@ -1,3 +1,5 @@
+package music;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -14,47 +16,31 @@ import java.util.Map;
 
 public class AuthSetMethod {
 
-    private static final String CLIENT_ID = "da072c60fcee469e8b0f4140aa4480d5";
-    private static final String CLIENT_SECRET = "8ada13093c704487b57c3a660448884e";
-    private static final String AUTHORIZE_PART = "/authorize";
-    private static final String RESPONSE_TYPE = "code";
-    private static final String TOKEN_PART = "/api/token";
-    private static final String GRANT_TYPE = "authorization_code";
-    private static final String REDIRECT_URI = "http://localhost:8080";
-
     private String code = "";
 
-    Map<String, String> setServers(final String[] args) {
+    Map<String, String> setServers() {
 
         Map<String, String> servers = new HashMap<>();
 
-        if (args.length != 0 && args[0].contains("-access")) {
-            servers.put("authServer", args[1]);
-        } else {
-            servers.put("authServer", "https://accounts.spotify.com");
-        }
-
-        if (args.length != 0 && args[2].contains("-resource")) {
-            servers.put("apiServer", args[3]);
-        } else {
-            servers.put("apiServer", "https://api.spotify.com");
-        }
+        servers.put("authServer", "https://accounts.spotify.com");
+        servers.put("apiServer", "https://api.spotify.com");
 
         return servers;
     }
 
     void launchServer(final String accessServer)
             throws IOException, InterruptedException {
+
         HttpServer server = HttpServer.create();
         server.bind(new InetSocketAddress(8080), 0);
 
         server.start();
 
         System.out.println("use this link to request the access code:");
-        System.out.println(accessServer + AUTHORIZE_PART
-                + "?client_id=" + CLIENT_ID
-                + "&redirect_uri=" + REDIRECT_URI
-                + "&response_type=" + RESPONSE_TYPE);
+        System.out.println(accessServer + UtilityClass.AUTHORIZE_PART
+                + "?client_id=" + UtilityClass.CLIENT_ID
+                + "&redirect_uri=" + UtilityClass.REDIRECT_URI
+                + "&response_type=" + UtilityClass.RESPONSE_TYPE);
         System.out.println("waiting for code...");
 
         server.createContext("/",
@@ -93,13 +79,13 @@ public class AuthSetMethod {
 
         HttpRequest requestForAccessToken = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(
-                        "client_id=" + CLIENT_ID
-                                + "&client_secret=" + CLIENT_SECRET
-                                + "&grant_type=" + GRANT_TYPE
+                        "client_id=" + UtilityClass.CLIENT_ID
+                                + "&client_secret=" + UtilityClass.CLIENT_SECRET
+                                + "&grant_type=" + UtilityClass.GRANT_TYPE
                                 + "&code=" + code
-                                + "&redirect_uri=" + REDIRECT_URI))
+                                + "&redirect_uri=" + UtilityClass.REDIRECT_URI))
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .uri(URI.create(accessServer + TOKEN_PART))
+                .uri(URI.create(accessServer + UtilityClass.TOKEN_PART))
                 .build();
 
         HttpResponse<String> responseWithAccessToken = HttpClient
@@ -112,8 +98,6 @@ public class AuthSetMethod {
 
         return parseAccessToken(fullToken);
     }
-
-
 
     private static String parseAccessToken(final String bearerToken) {
 
