@@ -1,23 +1,22 @@
-package music;
+package music.controller;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import music.model.Model;
+import music.view.View;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-class PlaylistsRequestMethod implements RequestMethod {
+public class PlaylistsRequestMethod extends BaseController implements RequestMethod {
 
     @Override
-    public void request(final String accessToken,
-                        final String apiServer,
-                        final String requestedCategory)
+    public void req(final String accessToken,
+                    final String apiServer,
+                    final String requestedCategory)
             throws IOException, InterruptedException {
 
         List<String> names = new ArrayList<>();
@@ -26,10 +25,15 @@ class PlaylistsRequestMethod implements RequestMethod {
         String uriPart = "categories";
         String userRequest = "categories";
 
-        JsonObject joCategoriesForPlaylists = Controller
-                .request(accessToken, apiServer, uriPart, userRequest);
+        HttpResponse<String> response = request(accessToken, apiServer, uriPart);
 
-        for (JsonElement item : joCategoriesForPlaylists
+        String json = response.body();
+
+        JsonObject joCategories = JsonParser.parseString(json)
+                .getAsJsonObject()
+                .getAsJsonObject(userRequest);
+
+        for (JsonElement item : joCategories
                                     .getAsJsonArray("items")) {
 
             String currentCategory = item.getAsJsonObject()
@@ -40,8 +44,10 @@ class PlaylistsRequestMethod implements RequestMethod {
                         .get("id")
                         .getAsString();
 
+                String uriPartForCategories = "categories/" + categoryId + "/playlists";
+
                 HttpResponse<String> responseWithPlaylistInCategory =
-                        response(accessToken, apiServer, categoryId);
+                        request(accessToken, apiServer, uriPartForCategories);
 
                 String playlistsInCategoryAsJson =
                         responseWithPlaylistInCategory.body();
@@ -55,32 +61,14 @@ class PlaylistsRequestMethod implements RequestMethod {
                         .getAsJsonObject()
                         .getAsJsonObject("playlists");
 
-                names = Controller.collectNames(joPlaylistsInCategory);
-                links = Controller.collectLinks(joPlaylistsInCategory);
+                Model model = new Model();
+
+                names = model.collectNames(joPlaylistsInCategory);
+                links = model.collectLinks(joPlaylistsInCategory);
             }
         }
 
         checkCategory(names, links);
-    }
-
-    private static HttpResponse<String> response(final String accessToken,
-                                                 final String apiServer,
-                                                 final String categoryId)
-            throws IOException, InterruptedException {
-
-        HttpRequest requestForPlayListInCategory = HttpRequest
-                .newBuilder()
-                .header("Authorization", "Bearer " + accessToken)
-                .uri(URI.create(apiServer + "/v1/browse/categories/"
-                        + categoryId + "/playlists"))
-                .GET()
-                .build();
-
-        return HttpClient
-                .newBuilder()
-                .build()
-                .send(requestForPlayListInCategory,
-                        HttpResponse.BodyHandlers.ofString());
     }
 
     private boolean failedRequest(String playlistsInCategoryAsJson) {
@@ -104,15 +92,7 @@ class PlaylistsRequestMethod implements RequestMethod {
         if (names.isEmpty()) {
             System.out.println("Unknown category name.");
         } else {
-            print(names, links);
-        }
-    }
-
-    static void print(List<String> names, List<String> links) {
-
-        for (int i = 0; i < names.size(); i++) {
-            System.out.println(names.get(i) + "\n"
-                    + links.get(i) + "\n");
+            new View().printNamesAndLinks(names, links);
         }
     }
 }

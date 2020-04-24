@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import com.sun.net.httpserver.HttpServer;
+import music.view.View;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,7 +13,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-class AuthSetMethod {
+public class AuthSet {
 
     private String code = "";
 
@@ -23,7 +24,7 @@ class AuthSetMethod {
         server.bind(new InetSocketAddress(8080), 0);
 
         server.start();
-        View.showAuthLink();
+        new View().showAuthLink();
 
         server.createContext("/",
                 exchange -> {

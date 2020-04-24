@@ -1,8 +1,10 @@
 package music;
 
+import music.controller.RequestMethod;
+
 import java.io.IOException;
 
-class Adviser {
+public class Adviser {
 
     private RequestMethod method;
 
@@ -15,6 +17,6 @@ class Adviser {
                        final String category)
             throws IOException, InterruptedException {
 
-        this.method.request(accessToken, apiServer, category);
+        this.method.req(accessToken, apiServer, category);
     }
 }

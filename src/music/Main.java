@@ -1,5 +1,10 @@
 package music;
 
+import music.controller.CategoriesRequestMethod;
+import music.controller.FeaturedRequestMethod;
+import music.controller.NewRequestMethod;
+import music.controller.PlaylistsRequestMethod;
+
 import java.util.Scanner;
 
 public class Main {
@@ -7,7 +12,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
         Adviser adviser = new Adviser();
-        AuthSetMethod authSetMethod = new AuthSetMethod();
+        AuthSet authSet = new AuthSet();
 
         String accessToken = "";
 
@@ -15,8 +20,8 @@ public class Main {
             String userRequest = sc.next();
             switch (userRequest) {
                 case "auth":
-                    authSetMethod.launchServer();
-                    accessToken = authSetMethod.getAccessToken();
+                    authSet.launchServer();
+                    accessToken = authSet.getAccessToken();
 
                     System.out.println("Success!");
                     break;
