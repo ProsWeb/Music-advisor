@@ -5,6 +5,15 @@ plugins {
 group 'org.example'
 version '1.0-SNAPSHOT'
 
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'music.Main'
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+
 repositories {
     mavenCentral()
 }

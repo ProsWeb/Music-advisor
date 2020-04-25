@@ -10,3 +10,5 @@
 - Strategy design pattern;
 - MVC design pattern;
 - Gradle.
+
+![Alt Text](https://github.com/ProsWeb/Music-advisor/blob/master/download.gif)
